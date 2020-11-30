@@ -1,6 +1,6 @@
 //Global variable definition
 def repoUtilsUrl="https://github.com/Move-BBUS-Team/BBUS_CICD_webMethods.git"
-def repoUtilsBranch="main"
+def repoUtilsBranch="wm10x_linux"
 def repoUtilsCredential = "5cc73375-491c-4b67-b9da-852c09f8c416"
 def dirUtils="wm/repository" 
 def props
