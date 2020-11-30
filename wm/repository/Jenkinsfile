@@ -1,7 +1,7 @@
 //Global variable definition
-def repoUtilsUrl="https://github.com/aminemerdassi/ps-devops-cicd-sample.git"
-def repoUtilsBranch="master"
-def repoUtilsCredential = "CREDENTIAL_GITHUB_USERNAME"
+def repoUtilsUrl="https://github.com/Move-BBUS-Team/BBUS_CICD_webMethods.git"
+def repoUtilsBranch="main"
+def repoUtilsCredential = "5cc73375-491c-4b67-b9da-852c09f8c416"
 def dirUtils="wm/repository" 
 def props
 def dirWorkspace
@@ -128,7 +128,7 @@ pipeline {
 			steps {
 						
 					buildAsRepo(props,"${dirWorkspace}","${params.BUILD_VERSION}.${BUILD_ID}","${params.ENABLE_IS_BUILD}","${params.ENABLE_BPM_BUILD}","${params.ENABLE_MWS_BUILD}","${params.ENABLE_UM_BUILD}","${params.ENABLE_AGW_BUILD}")
-					uploadArchive(props,"${dirWorkspace}","${params.BUILD_VERSION}.${BUILD_ID}")
+					// uploadArchive(props,"${dirWorkspace}","${params.BUILD_VERSION}.${BUILD_ID}")
 				
 				}
 			}
