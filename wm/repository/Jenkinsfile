@@ -312,6 +312,9 @@ def createProject(props, dirWorkspace, dirUtils, module, assetPrefix, type, buil
     deployerParameters = []
     importVsParameters = []
     if(!(clustered==null || clustered.isEmpty())) {
+        if(!(type in ["IS","BPM"]) {
+            error("Project type ${type} does not support clustered deployments.")
+        }
         buildTarget = "createRepositoryProjectForCluster"
         importVsTarget = "importVarSubsForCluster"
         xsltTemplate="${dirTemplates}/AutomatorRepository${type}Cluster.xslt"
