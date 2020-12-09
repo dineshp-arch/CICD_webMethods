@@ -13,40 +13,40 @@
 
 	<taskdef classpath = "${sag.install.dir}/common/lib/ant/ant-contrib-1.0b3.jar" resource="net/sf/antcontrib/antlib.xml"/>
 	
-   	<target name="createRepositoryProject">
-    
-    <delete file="${automator.file}" quiet="true"/>
-   		
-	<echo message="Prepare Automater file from xslt template  ${xslt.template}...."/>
-	<xslt style="${xslt.template}" in="${automator.template}" out="${automator.file}">
-	
-		<param name="deployerHost" expression="${deployer.host}" />
-		<param name="deployerPort" expression="${deployer.port}" />
-		<param name="deployerUsername" expression="${deployer.user}" />
-		<param name="deployerPassword" expression="${deployer.pwd}" />
-		
-		<param name="targetHost" expression="${target.host}" />
-		<param name="targetPort" expression="${target.port}" />
-		<param name="targetAlias" expression="${target.alias}" />
-		<param name="targetUsername" expression="${target.user}" />
-		<param name="targetPassword" expression="${target.pwd}" />
-		<param name="targetVersion" expression="${target.version}" />
-		<param name="targetSsl" expression="${target.ssl}" />
-		
-		<param name="sourceAlias" expression="${repository.alias}" />
-		<param name="sourcePath" expression="${repository.path}" />
+	<target name="createRepositoryProject">
 
-		<param name="projectName" expression="${proj.name}" />
-		<param name="compositeName" expression="${composite.name}" />
-		<param name="setName" expression="${deployment.name}" />
-		<param name="mapName" expression="${map.name}" />
-		<param name="candidateName" expression="${candidate.name}" />
-		<param name="buildVersion" expression="${build.version}" />
-		
-	</xslt>
-   		
+		<delete file="${automator.file}" quiet="true"/>
+
+		<echo message="Prepare Automater file from xslt template  ${xslt.template}...."/>
+		<xslt style="${xslt.template}" in="${automator.template}" out="${automator.file}">
+
+			<param name="deployerHost" expression="${deployer.host}" />
+			<param name="deployerPort" expression="${deployer.port}" />
+			<param name="deployerUsername" expression="${deployer.user}" />
+			<param name="deployerPassword" expression="${deployer.pwd}" />
+
+			<param name="targetHost" expression="${target.host}" />
+			<param name="targetPort" expression="${target.port}" />
+			<param name="targetAlias" expression="${target.alias}" />
+			<param name="targetUsername" expression="${target.user}" />
+			<param name="targetPassword" expression="${target.pwd}" />
+			<param name="targetVersion" expression="${target.version}" />
+			<param name="targetSsl" expression="${target.ssl}" />
+
+			<param name="sourceAlias" expression="${repository.alias}" />
+			<param name="sourcePath" expression="${repository.path}" />
+
+			<param name="projectName" expression="${proj.name}" />
+			<param name="compositeName" expression="${composite.name}" />
+			<param name="setName" expression="${deployment.name}" />
+			<param name="mapName" expression="${map.name}" />
+			<param name="candidateName" expression="${candidate.name}" />
+			<param name="buildVersion" expression="${build.version}" />
+
+		</xslt>
+
 		<echo message="Automater file name ....${automator.file}"/>
-		
+
 		<if>
 			<os family="windows"/>
 			<then>
@@ -56,15 +56,78 @@
 					<arg value="${automator.file}" />
 				</exec>
 			</then>
-		<else>
+			<else>
 				<exec executable="/bin/bash" dir="${deployer.home}/bin" failonerror="true">
 					<arg value="projectautomatorUnix.sh"/>
 					<arg value="${automator.file}" />
 				</exec>
-		</else>
+			</else>
 		</if>
-		
+
 	</target>    	
+
+	<target name="createRepositoryProjectForCluster">
+
+		<delete file="${automator.file}" quiet="true"/>
+
+		<echo message="Prepare Automater file from xslt template  ${xslt.template}...."/>
+		<xslt style="${xslt.template}" in="${automator.template}" out="${automator.file}">
+
+			<param name="deployerHost" expression="${deployer.host}" />
+			<param name="deployerPort" expression="${deployer.port}" />
+			<param name="deployerUsername" expression="${deployer.user}" />
+			<param name="deployerPassword" expression="${deployer.pwd}" />
+
+			<param name="targetClusterGroupAlias" expression="${target.clusterGroupAlias}" />
+
+			<param name="targetHost1" expression="${target.host1}" />
+			<param name="targetPort1" expression="${target.port1}" />
+			<param name="targetAlias1" expression="${target.alias1}" />
+			<param name="targetUsername1" expression="${target.user1}" />
+			<param name="targetPassword1" expression="${target.pwd1}" />
+			<param name="targetVersion1" expression="${target.version1}" />
+			<param name="targetSsl1" expression="${target.ssl1}" />
+
+			<param name="targetHost2" expression="${target.host2}" />
+			<param name="targetPort2" expression="${target.port2}" />
+			<param name="targetAlias2" expression="${target.alias2}" />
+			<param name="targetUsername2" expression="${target.user2}" />
+			<param name="targetPassword2" expression="${target.pwd2}" />
+			<param name="targetVersion2" expression="${target.version2}" />
+			<param name="targetSsl2" expression="${target.ssl2}" />
+
+
+			<param name="sourceAlias" expression="${repository.alias}" />
+			<param name="sourcePath" expression="${repository.path}" />
+
+			<param name="projectName" expression="${proj.name}" />
+			<param name="compositeName" expression="${composite.name}" />
+			<param name="setName" expression="${deployment.name}" />
+			<param name="mapName" expression="${map.name}" />
+			<param name="candidateName" expression="${candidate.name}" />
+			<param name="buildVersion" expression="${build.version}" />
+
+		</xslt>
+
+		<echo message="Automater file name ....${automator.file}"/>
+
+		<if>
+			<os family="windows"/>
+			<then>
+				<exec executable="cmd" dir="${deployer.home}/bin" failonerror="true">
+					<arg value="/c" />
+					<arg value="projectautomator.bat"/>
+					<arg value="${automator.file}" />
+				</exec>
+			</then>
+			<else>
+				<exec executable="/bin/bash" dir="${deployer.home}/bin" failonerror="true">
+					<arg value="projectautomatorUnix.sh"/>
+					<arg value="${automator.file}" />
+				</exec>
+			</else>
+		</if>
+	</target>
     	
 	<target name="createRuntimeProject">
     
@@ -116,81 +179,157 @@
 	</target>	
 	
 	<target name="importVarSubs">	
-	    <if>
-	        <available file="${vs.dir}/${vs.file}"/>
-	        <then>
-		    	<echo message="Copying the new variable Substitutions...."/>
+		<if>
+			<available file="${vs.dir}/${vs.file}"/>
+			<then>
+				<echo message="Copying the new variable Substitutions...."/>
 				<copy file="${vs.dir}/${vs.file}" tofile="${deployer.home}/replicate/inbound/${proj.name}_${vs.file}" overwrite="true">
-		    	<filterchain>
-		           <striplinecomments>
-		              <comment value="!"/>
-		           </striplinecomments>
-		           <replacetokens>
-		                <token key="REPO_ALIAS" value="${repository.alias}"/>
-			            <token key="DEPSET_NAME" value="${deployment.name}"/>
-			           	<token key="TARGET_ALIAS" value="${target.alias}"/>
-		            </replacetokens>
-		        </filterchain>
+					<filterchain>
+						<striplinecomments>
+							<comment value="!"/>
+						</striplinecomments>
+						<replacetokens>
+							<token key="REPO_ALIAS" value="${repository.alias}"/>
+							<token key="DEPSET_NAME" value="${deployment.name}"/>
+							<token key="TARGET_ALIAS" value="${target.alias}"/>
+						</replacetokens>
+					</filterchain>
 				</copy>
 				<echo message="Importing the new variable Substitutions...."/>
 				<if>
 					<os family="windows"/>
-						<then>
-							<exec executable="cmd" dir="${deployer.home}/bin" failonerror="true">
-								<arg value="/c" /> 
-								<arg value="Deployer.bat"/>
-								<arg value="--import" />
-								<arg value="-varsub" />
-								<arg value="--vsFile" />
-								<arg value="${proj.name}_${vs.file}" />
-								<arg value="-map" />
-								<arg value="${proj.map}" />
-								<arg value="-project" />
-								<arg value="${proj.name}" />
-								<arg value="-validate" />
-								<arg value="false" />
-								<arg value="-host" />
-								<arg value="${deployer.host}" />
-								<arg value="-port" />
-								<arg value="${deployer.port}" />
-								<arg value="-user" />
-								<arg value="${deployer.user}" />
-								<arg value="-pwd" />
-								<arg value="${deployer.pwd}" />
-							</exec>
-						</then>
-				<else>
-							<exec executable="/bin/bash" dir="${deployer.home}/bin" failonerror="true"> 
-								<arg value="Deployer.sh"/>
-								<arg value="--import" />
-								<arg value="-varsub" />
-								<arg value="--vsFile" />
-								<arg value="${proj.name}_${vs.file}" />
-								<arg value="-map" />
-								<arg value="${proj.map}" />
-								<arg value="-project" />
-								<arg value="${proj.name}" />
-								<arg value="-validate" />
-								<arg value="false" />
-								<arg value="-host" />
-								<arg value="${deployer.host}" />
-								<arg value="-port" />
-								<arg value="${deployer.port}" />
-								<arg value="-user" />
-								<arg value="${deployer.user}" />
-								<arg value="-pwd" />
-								<arg value="${deployer.pwd}" />
-							</exec>
-				</else>
+					<then>
+						<exec executable="cmd" dir="${deployer.home}/bin" failonerror="true">
+							<arg value="/c" /> 
+							<arg value="Deployer.bat"/>
+							<arg value="--import" />
+							<arg value="-varsub" />
+							<arg value="--vsFile" />
+							<arg value="${proj.name}_${vs.file}" />
+							<arg value="-map" />
+							<arg value="${proj.map}" />
+							<arg value="-project" />
+							<arg value="${proj.name}" />
+							<arg value="-validate" />
+							<arg value="false" />
+							<arg value="-host" />
+							<arg value="${deployer.host}" />
+							<arg value="-port" />
+							<arg value="${deployer.port}" />
+							<arg value="-user" />
+							<arg value="${deployer.user}" />
+							<arg value="-pwd" />
+							<arg value="${deployer.pwd}" />
+						</exec>
+					</then>
+					<else>
+						<exec executable="/bin/bash" dir="${deployer.home}/bin" failonerror="true"> 
+							<arg value="Deployer.sh"/>
+							<arg value="--import" />
+							<arg value="-varsub" />
+							<arg value="--vsFile" />
+							<arg value="${proj.name}_${vs.file}" />
+							<arg value="-map" />
+							<arg value="${proj.map}" />
+							<arg value="-project" />
+							<arg value="${proj.name}" />
+							<arg value="-validate" />
+							<arg value="false" />
+							<arg value="-host" />
+							<arg value="${deployer.host}" />
+							<arg value="-port" />
+							<arg value="${deployer.port}" />
+							<arg value="-user" />
+							<arg value="${deployer.user}" />
+							<arg value="-pwd" />
+							<arg value="${deployer.pwd}" />
+						</exec>
+					</else>
 				</if>	        		        	
-	        </then>
-	        <else>
-		    	<echo message="Warning : file doesn't exist ${vs.dir}/${vs.file} !!!...."/>	            
-	        </else>
-	    </if>
-			
+			</then>
+			<else>
+				<echo message="Warning : file doesn't exist ${vs.dir}/${vs.file} !!!...."/>	            
+			</else>
+		</if>
+
 	</target>
 
+	<target name="importVarSubsForCluster">	
+		<if>
+			<available file="${vs.dir}/${vs.file}"/>
+			<then>
+				<echo message="Copying the new variable Substitutions...."/>
+				<copy file="${vs.dir}/${vs.file}" tofile="${deployer.home}/replicate/inbound/${proj.name}_${vs.file}" overwrite="true">
+					<filterchain>
+						<striplinecomments>
+							<comment value="!"/>
+						</striplinecomments>
+						<replacetokens>
+							<token key="REPO_ALIAS" value="${repository.alias}"/>
+							<token key="DEPSET_NAME" value="${deployment.name}"/>
+							<token key="TARGET_ALIAS1" value="${target.alias1}"/>
+							<token key="TARGET_ALIAS2" value="${target.alias2}"/>
+						</replacetokens>
+					</filterchain>
+				</copy>
+				<echo message="Importing the new variable Substitutions...."/>
+				<if>
+					<os family="windows"/>
+					<then>
+						<exec executable="cmd" dir="${deployer.home}/bin" failonerror="true">
+							<arg value="/c" /> 
+							<arg value="Deployer.bat"/>
+							<arg value="--import" />
+							<arg value="-varsub" />
+							<arg value="--vsFile" />
+							<arg value="${proj.name}_${vs.file}" />
+							<arg value="-map" />
+							<arg value="${proj.map}" />
+							<arg value="-project" />
+							<arg value="${proj.name}" />
+							<arg value="-validate" />
+							<arg value="false" />
+							<arg value="-host" />
+							<arg value="${deployer.host}" />
+							<arg value="-port" />
+							<arg value="${deployer.port}" />
+							<arg value="-user" />
+							<arg value="${deployer.user}" />
+							<arg value="-pwd" />
+							<arg value="${deployer.pwd}" />
+						</exec>
+					</then>
+					<else>
+						<exec executable="/bin/bash" dir="${deployer.home}/bin" failonerror="true"> 
+							<arg value="Deployer.sh"/>
+							<arg value="--import" />
+							<arg value="-varsub" />
+							<arg value="--vsFile" />
+							<arg value="${proj.name}_${vs.file}" />
+							<arg value="-map" />
+							<arg value="${proj.map}" />
+							<arg value="-project" />
+							<arg value="${proj.name}" />
+							<arg value="-validate" />
+							<arg value="false" />
+							<arg value="-host" />
+							<arg value="${deployer.host}" />
+							<arg value="-port" />
+							<arg value="${deployer.port}" />
+							<arg value="-user" />
+							<arg value="${deployer.user}" />
+							<arg value="-pwd" />
+							<arg value="${deployer.pwd}" />
+						</exec>
+					</else>
+				</if>	        		        	
+			</then>
+			<else>
+				<echo message="Warning : file doesn't exist ${vs.dir}/${vs.file} !!!...."/>	            
+			</else>
+		</if>
+
+	</target>
 	<target name="exportProject">
 		<echo message="Exporting project..."/>
 		<if>

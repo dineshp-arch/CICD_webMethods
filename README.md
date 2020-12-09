@@ -52,24 +52,6 @@ Add the different credentials that will be used by the framework (Jenkins > Cred
 * Create a credential for the repository where the framework is located
 * Create a credential for each asset repository (A single credential can be used, if authentication information is the same for the different repositories)
 
-### Update Jenkinsfile
-
-After check-in of the framework a on git repository, the following variables need to be updated in Jenkinsfile : 
-
-```
-def repoUtilsUrl = <GIT_REPOSITORY_URL>
-def repoUtilsBranch = <GIT_BRANCH>
-def repoUtilsCredential = <GIT_CREDENTIAL>
-```
-
-Where :
-
-* GIT_REPSOITROY_URL : git repository url where the framework is located
-* GIT_BRANCH : git repository branch to checkout
-* GIT_CREDENTIAL : git credential ID as configured in the Jenkins instance
-
-These information will be used to checkout and populate the parameters fields for the job by reading the properties files located in "parameters" folder.
-
 ### Update build_\<env\>.properties
 
 In order to configure the environment update build_<env>.properties file located in "properties" folder. 
@@ -193,6 +175,28 @@ For API Gateway only, update the following properties in order to extract assets
 * source.pwd.agw: source API Gateway password
 * source.assets.file.agw : json extraction file (refer to API Gateway documentation) 
 
+
+#### Target Cluster configuration
+
+For IS and BPM assets update the following properties:
+```
+cluster.alias.<COMPONENT>=<CLUSTER ALIAS>
+cluster.members.<COMPONENT>=<Comma separated list of members>
+target.alias.<Member#N>=<TARGET_ALIAS#N>
+target.host.<Member#N>=<TARGET_HOST#N>
+target.port.<Member#N>=<TARGET_PORT#N>
+target.user.<Member#N>=<TARGET_USER#N>
+target.pwd.<Member#N>=<TARGET_PWD#N>
+target.version.<Member#N>=<TARGET_VERSION#N>
+target.ssl.<Member#N>=false|true
+```
+
+Where `<Member#N>` must match one member of the `cluster.members.<COMPONENT>` list.
+
+Note: Only 2 nodes cluster are supported by this Jenkinsfile.
+
+
+
 #### Artifact repository configuration (Nexus)
 
 Update properties used for Nexus upload : 
@@ -205,11 +209,33 @@ repo.artifact.path.abe=<NEXUS_FOLDER_ABE>
 
 Where :
 
-* NEXUS_CREDENTIAL : Credential id used to connect to Nexus repository (basic authentification)
-* NEXUS_URL : URL of the repository
-* NEXUS_FOLDER_ABE : Folder where ACDL build output will be stored
+* `NEXUS_CREDENTIAL` : Credential id used to connect to Nexus repository (basic authentification)
+* `NEXUS_URL` : URL of the repository
+* `NEXUS_FOLDER_ABE` : Folder where ACDL build output will be stored
 
 ![Nexus folders](./resources/img/nexus_folders.png)
+
+### Substitution Variables files
+
+Jenkins workflow supports the import of substitution variables into generated deployers projects.
+To do so:
+
+1. On an Deployer instance, create an new project containing all pacakges that will be deployed by the Jenkins job (or run Jenkins job once to generate a project)
+	* Go to the map step
+	* Configure substitution as required
+	* Export the substitution file
+3. Copy this file into the GitHub asset repository (i.e. the repository where are stored webMethods assets) under the folder `env/varsub/<env>`
+4. Rename this file to the value provided by the property `dep.vs.<component>` defined in the environment build.properties file.
+	* For example, by default, for IS assets, this file must be name "esb.vs"
+5. Within this file, replace the values of the following parameters:
+	* `targetServerName` with  `TARGET_ALIAS`
+	* `ServerAliasName` with `REPO_ALIAS`
+	* `deploymentSetName` with `DEPSET_NAME`
+	* For example, replace : 
+`<DeploymentSet allowEmptyValues="false" assetCompositeName="JcUMQueueManager" deploymentSetName="ISDepSet" serverAliasName="BBUS_Repo" targetServerName="SAGISINT" targetServerType="IS">`
+	* With: 
+`<DeploymentSet allowEmptyValues="false" assetCompositeName="JcUMQueueManager" deploymentSetName="DEPSET_NAME" serverAliasName="REPO_ALIAS" targetServerName="TARGET_ALIAS" targetServerType="IS">`
+
 
 ### Jenkins job 
 
@@ -225,10 +251,10 @@ Definition > Script Path : <PATH_SCRIPT>
 ```
 Where :
 
-* GIT_REPSOITROY_URL : git repository url where the framework is located
-* GIT_BRANCH : git repository branch to checkout
-* GIT_CREDENTIAL : git credential ID as configured in the Jenkins instance
-* PATH_SCRIPT : relative path to Jenkins file (e.g : wm/repository/Jenkinsfile)
+* `GIT_REPSOITROY_URL` : git repository url where the framework is located
+* `GIT_BRANCH` : git repository branch to checkout
+* `GIT_CREDENTIAL` : git credential ID as configured in the Jenkins instance
+* `PATH_SCRIPT` : relative path to Jenkins file (e.g : wm/repository/Jenkinsfile)
 
 ## Running Jenkins job 
 
