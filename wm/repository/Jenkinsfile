@@ -86,7 +86,7 @@ pipeline {
             steps {
                 script {
                     
-                    branchOrTagToCheckout = sh(
+                    branchOrTagToCheckout = sh '''#!/bin/bash(
                         script: 'echo ${TAG:-${BRANCH}}',
                         returnStdout: true).trim()
                     module = MODULE.trim().toLowerCase()
@@ -100,7 +100,7 @@ pipeline {
                     dirWorkspace = props['dir.workspace'] +"/${params.ENVIRONMENT}/"+ [module]
 
                     //Create workspace subdirectories (used by ABE)
-                    sh "mkdir -p ${dirWorkspace}/archive;\
+                    sh '''#!/bin/bash "mkdir -p ${dirWorkspace}/archive;\
                         mkdir -p ${dirWorkspace}/logs;\
                         mkdir -p ${dirWorkspace}/source;\
                         mkdir -p ${dirWorkspace}/builds;"
@@ -132,7 +132,7 @@ pipeline {
                             userRemoteConfigs: [[
                                 credentialsId: repoAssetsCredential, 
                                 url: repositoryAssetsUrl]]])
-                        packages = sh(
+                        packages = sh '''#!/bin/bash(
                             script: 'for f in $(find . -name "manifest.v3"); do echo $(basename $(dirname $f)); done',
                             returnStdout: true
                         ).trim().split("\\r?\\n")
@@ -256,9 +256,9 @@ def buildAsRepo(props, dirWorkspace, buildVersion, enableIsBuild, enableBpmBuild
     }
     abeISSources = abeISSourceArray.join(";")
 
-    sh "rm -rf ${dirWorkspace}/builds/*"
+    sh '''#!/bin/bash "rm -rf ${dirWorkspace}/builds/*"
     
-    sh "${dirSagInstall}/common/AssetBuildEnvironment/bin/build.sh\
+    sh '''#!/bin/bash "${dirSagInstall}/common/AssetBuildEnvironment/bin/build.sh\
         -Dsag.install.dir=${dirSagInstall}\
         -Dbuild.source.dir=${assetsDir}/$dirAssetBPM\\;${assetsDir}/$dirAssetMWS\\;${assetsDir}/$dirAssetUM\
         -Dbuild.source.project.dir=${abeISSources} \
@@ -350,7 +350,7 @@ def createProject(props, dirWorkspace, dirUtils, module, assetPrefix, type, buil
     //For wM9.x versions ant is located in ${dirSagInstall}/common/AssetBuildEnvironment/ant/bin/ant
     //For wM10.x versions ant is located in ${dirSagInstall}/common/lib/ant/bin/ant
         
-    sh "${dirSagInstall}/common/lib/ant/bin/ant -file $dirTemplates/build-custom.xml ${buildTarget} \
+    sh '''#!/bin/bash "${dirSagInstall}/common/lib/ant/bin/ant -file $dirTemplates/build-custom.xml ${buildTarget} \
         -Dsag.install.dir=${dirSagInstall}\
         -Dautomator.file=${automatorFile} \
         -Dautomator.template=${xmlTemplate} \
@@ -371,7 +371,7 @@ def createProject(props, dirWorkspace, dirUtils, module, assetPrefix, type, buil
         ${deployerParameters}.join(' ')"
 
     try {
-        sh "${dirSagInstall}/common/lib/ant/bin/ant -file $dirTemplates/build-custom.xml ${importVsTarget} \
+        sh '''#!/bin/bash "${dirSagInstall}/common/lib/ant/bin/ant -file $dirTemplates/build-custom.xml ${importVsTarget} \
             -Dsag.install.dir=${dirSagInstall} \
             -Dvs.dir=${dirAssetVs} \
             -Dvs.file=${varsubFile} \
@@ -407,8 +407,8 @@ def deployProject(props, module, type, buildVersion) {
     ltype = type.toLowerCase()
     depCanName=props['dep.can.' + ltype]
 
-    sh "${deployerHome}/bin/Deployer.sh --checkpoint -project ${projectName} -dc ${depCanName} -host ${deployerHost} -port ${deployerPort} -user ${deployerUser} -pwd ${deployerPwd}"
-    sh "${deployerHome}/bin/Deployer.sh --deploy -project ${projectName} -dc ${depCanName} -host ${deployerHost} -port ${deployerPort} -user ${deployerUser} -pwd ${deployerPwd}"
+    sh '''#!/bin/bash "${deployerHome}/bin/Deployer.sh --checkpoint -project ${projectName} -dc ${depCanName} -host ${deployerHost} -port ${deployerPort} -user ${deployerUser} -pwd ${deployerPwd}"
+    sh '''#!/bin/bash "${deployerHome}/bin/Deployer.sh --deploy -project ${projectName} -dc ${depCanName} -host ${deployerHost} -port ${deployerPort} -user ${deployerUser} -pwd ${deployerPwd}"
     
 }
 
@@ -420,11 +420,11 @@ def uploadArchive(props,dirWorkspace,buildVersion) {
 
 
     dir("${dirWorkspace}/builds") {
-        sh "zip -r ${buildVersion}.zip ."
+        sh '''#!/bin/bash "zip -r ${buildVersion}.zip ."
         withCredentials([usernamePassword(credentialsId: "${repoArtifactCredential}", usernameVariable: "artifactUser", passwordVariable: "artifactPwd")]) {
-            sh "curl -v -u ${artifactUser}:${artifactPwd} --upload-file ${buildVersion}.zip ${repoArtifactUrl}/${repoArtifactPath}/${buildVersion}.zip"
+            sh '''#!/bin/bash "curl -v -u ${artifactUser}:${artifactPwd} --upload-file ${buildVersion}.zip ${repoArtifactUrl}/${repoArtifactPath}/${buildVersion}.zip"
         }
-        sh "rm -rf ${buildVersion}.zip"
+        sh '''#!/bin/bash "rm -rf ${buildVersion}.zip"
 
     }       
 }
