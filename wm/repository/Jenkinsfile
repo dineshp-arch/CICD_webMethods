@@ -131,7 +131,7 @@ pipeline {
                             submoduleCfg:[],
                             userRemoteConfigs: [[
                                 credentialsId: repoAssetsCredential, 
-                                url: repositoryAssetsUrl]]]])
+                                url: repositoryAssetsUrl]]])
                         packages = sh(
                             script: 'for f in $(find . -name "manifest.v3"); do echo $(basename $(dirname $f)); done',
                             returnStdout: true
