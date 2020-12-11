@@ -282,7 +282,7 @@ def buildAsRepo(props, dirWorkspace, buildVersion, enableIsBuild, enableBpmBuild
 
 def createProject(props, dirWorkspace, dirUtils, module, assetPrefix, type, buildVersion) {
 
-    if(!(type in ["IS","BPM","MWS","UM","AGW"]) {
+    if(!(type in ["IS","BPM","MWS","UM","AGW"])) {
         error("Unsupported project type: ${type}")
     }
 
@@ -312,7 +312,7 @@ def createProject(props, dirWorkspace, dirUtils, module, assetPrefix, type, buil
     deployerParameters = []
     importVsParameters = []
     if(!(clustered==null || clustered.isEmpty())) {
-        if(!(type in ["IS","BPM"]) {
+        if(!(type in ["IS","BPM"])) {
             error("Project type ${type} does not support clustered deployments.")
         }
         buildTarget = "createRepositoryProjectForCluster"
@@ -395,7 +395,7 @@ def createProject(props, dirWorkspace, dirUtils, module, assetPrefix, type, buil
 
 
 def deployProject(props, module, type, buildVersion) {
-    if(!(type in ["IS","BPM","MWS","UM","AGW"]) {
+    if(!(type in ["IS","BPM","MWS","UM","AGW"])) {
         error("Unsupported project type: ${type}")
     }
 
