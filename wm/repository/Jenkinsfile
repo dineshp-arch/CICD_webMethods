@@ -393,7 +393,6 @@ def createProject(props, dirWorkspace, dirUtils, module, assetPrefix, type, buil
 
 }
 
-
 def deployProject(props, module, type, buildVersion) {
     if(!(type in ["IS","BPM","MWS","UM","AGW"])) {
         error("Unsupported project type: ${type}")
