@@ -27,7 +27,7 @@ pipeline {
         disableConcurrentBuilds()
         buildDiscarder(logRotator(numToKeepStr:'10'))
         timestamps()
-        ansiColor('xterm')
+        ansiColor("xterm")
     }
     
     parameters {
@@ -149,7 +149,7 @@ pipeline {
             }
         }       
         
-	stage('Build source code') {
+        stage('Build source code') {
             when {
                 anyOf {
                     expression {"${params.MODE}" == "Build"}
