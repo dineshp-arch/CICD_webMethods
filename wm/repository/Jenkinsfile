@@ -368,7 +368,7 @@ def createProject(props, dirWorkspace, dirUtils, module, assetPrefix, type, buil
         -Dcandidate.name=${depCanName} \
         -Dcomposite.name=${assetPrefix} \
         -Dbuild.version=${buildVersion} \
-        ${deployerParameters.join(' ')"
+        ${deployerParameters}.join(' ')"
 
     try {
         sh "${dirSagInstall}/common/lib/ant/bin/ant -file $dirTemplates/build-custom.xml ${importVsTarget} \
@@ -385,7 +385,7 @@ def createProject(props, dirWorkspace, dirUtils, module, assetPrefix, type, buil
             -Ddeployment.name=${depSetName} \
             -Dmap.name=${depMapName} \
             -Dproj.map=$depMapName \
-            ${importVsParameters.join(' ')"
+            ${importVsParameters}.join(' ')"
     } catch (Exception e) {
         echo "Error during varsub import. Check the corresponding varsub file or perform the operations manually"
         currentBuild.currentResult = "UNSTABLE"
