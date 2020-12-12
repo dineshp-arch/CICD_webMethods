@@ -173,8 +173,7 @@ pipeline {
                 stage ('IS') {
                     when {
                         expression { "${params.ENABLE_IS_BUILD}" == 'true' }
-                        echo "Stepped into IS - Project"
-                     }
+                       }
                     
                     steps {
                         createProject(props,"${dirWorkspace}","${dirUtils}","${params.MODULE}","*","IS","${params.BUILD_VERSION}") 
