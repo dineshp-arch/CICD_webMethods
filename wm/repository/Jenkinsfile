@@ -401,7 +401,7 @@ def createProject(props, dirWorkspace, dirUtils, module, assetPrefix, type, buil
 		-Dmap.name=${depMapName} \
 		-Dcandidate.name=${depCanName} \
 		-Dcomposite.name=${assetPrefix} \
-		-Dbuild.version=${buildVersion}"
+		-Dbuild.version=${buildVersion}" \
 		${deployerParameters}.join(' ')"								
 
 		try {
