@@ -166,9 +166,9 @@ pipeline {
 
         stage ('Create and deploy projects') {
             when {
-            allOf {
+            
                 expression {"${params.MODE}" == "Build&Deploy"}
-                }    
+              
             }
             stages {
                 stage ('IS') {
@@ -190,6 +190,7 @@ pipeline {
                    steps {
                       createProject(props,"${dirWorkspace}","${dirUtils}","${params.MODULE}","*","BPM","${params.BUILD_VERSION}") 
                       deployProject(props,"${params.MODULE}","BPM","${params.BUILD_VERSION}") 
+
                     }
                 }
                 stage ('MWS') {
