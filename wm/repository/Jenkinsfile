@@ -284,10 +284,6 @@ def buildAsRepo(props, dirWorkspace, buildVersion, enableIsBuild, enableBpmBuild
 
 def createProject(props, dirWorkspace, dirUtils, module, assetPrefix, type, buildVersion) {
 
-    if(!(type in ["IS","BPM","MWS","UM","AGW"])) {
-        error("Unsupported project type: ${type}")
-    }
-
     dirSagInstall=props['dir.install.build']
     dirTemplates="${workspace}/${dirUtils}/templates"
     dirAssetVs="${dirWorkspace}/source/"+props['dir.asset.vs']
