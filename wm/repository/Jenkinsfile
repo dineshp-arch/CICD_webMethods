@@ -61,10 +61,10 @@ pipeline {
             choices: 'false\ntrue',
             description: 'Enable IS Build',
             name: 'ENABLE_IS_BUILD')
-        // choice(
-        //    choices: 'false\ntrue',
-        //    description: 'Enable BPM Build',
-        //    name: 'ENABLE_BPM_BUILD')
+        choice(
+           choices: 'false\ntrue',
+           description: 'Enable BPM Build',
+           name: 'ENABLE_BPM_BUILD')
         choice(
             choices: 'false\ntrue',
             description: 'Enable MWS Build',
@@ -178,19 +178,19 @@ pipeline {
                     steps {
                         createProject(props,"${dirWorkspace}","${dirUtils}","${params.MODULE}","*","IS","${params.BUILD_VERSION}") 
                         deployProject(props,"${params.MODULE}","IS","${params.BUILD_VERSION}")
-                        echo "Executed IS Deployment set" 
                     }
                 }
                 
-               // stage ('BPM') {
-               //     when {
-               //         expression { "${params.ENABLE_BPM_BUILD}" == 'true' }
-               //     }
-               //     steps {
-               //         createProject(props,"${dirWorkspace}","${dirUtils}","${params.MODULE}","*","BPM","${params.BUILD_VERSION}") 
-               //       deployProject(props,"${params.MODULE}","BPM","${params.BUILD_VERSION}") 
-               //     }
-               // }
+               stage ('BPM') {
+                    when {
+                        expression { "${params.ENABLE_BPM_BUILD}" == 'true' }
+                     }
+               
+                   steps {
+                      createProject(props,"${dirWorkspace}","${dirUtils}","${params.MODULE}","*","BPM","${params.BUILD_VERSION}") 
+                      deployProject(props,"${params.MODULE}","BPM","${params.BUILD_VERSION}") 
+                    }
+                }
                 stage ('MWS') {
                     when {
                         expression { "${params.ENABLE_MWS_BUILD}" == 'true' }
