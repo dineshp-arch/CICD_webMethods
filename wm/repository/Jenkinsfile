@@ -230,7 +230,6 @@ pipeline {
 
     }
 
-}
 
 
 def buildAsRepo(props, dirWorkspace, buildVersion, enableIsBuild, enableBpmBuild, enableMwsBuild, enableUmBuild, enableAgwBuild, targetPackages) {
