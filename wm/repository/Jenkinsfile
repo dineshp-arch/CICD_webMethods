@@ -190,7 +190,6 @@ pipeline {
                    steps {
                       createProject(props,"${dirWorkspace}","${dirUtils}","${params.MODULE}","*","BPM","${params.BUILD_VERSION}") 
                       deployProject(props,"${params.MODULE}","BPM","${params.BUILD_VERSION}") 
-
                     }
                 }
                 stage ('MWS') {
@@ -285,145 +284,114 @@ def buildAsRepo(props, dirWorkspace, buildVersion, enableIsBuild, enableBpmBuild
 
 def createProject(props, dirWorkspace, dirUtils, module, assetPrefix, type, buildVersion) {
 
+    if(!(type in ["IS","BPM","MWS","UM","AGW"])) {
+        error("Unsupported project type: ${type}")
+    }
+
     dirSagInstall=props['dir.install.build']
     dirTemplates="${workspace}/${dirUtils}/templates"
     dirAssetVs="${dirWorkspace}/source/"+props['dir.asset.vs']
 
-	deployerHome=props['dir.install.build']+"/"+props['dir.install.deployer']
-	deployerHost=props['deployer.host']	
-	deployerPort=props['deployer.port']
-	deployerUser=props['deployer.user']
-	deployerPwd=props['deployer.pwd']
+    deployerHome=props['dir.install.build']+"/"+props['dir.install.deployer']
+    deployerHost=props['deployer.host'] 
+    deployerPort=props['deployer.port']
+    deployerUser=props['deployer.user']
+    deployerPwd=props['deployer.pwd']
 
-	projectName = "${module}_${type}_${buildVersion}"	
-	repositoryAlias="${module}_Repo"
-	repositoryPath="${dirWorkspace}/builds"
-	automatorFile = "${dirWorkspace}/${module}_Automator${type}_${buildVersion}.xml"
-	    
-	switch("${type}") {
-		case "IS":
-				xmlTemplate="${dirTemplates}/"+props['template.base.is']
-				xsltTemplate="${dirTemplates}/"+props['templete.xslt.is']
-				targetAlias=props['target.alias.is']
-				targetHost=props['target.host.is']
-				targetPort=props['target.port.is']
-				targetUser=props['target.user.is']
-				targetPwd=props['target.pwd.is']
-				targetVersion=props['target.version.is']							
-				targetSsl=props['target.ssl.is']							
-				depSetName=props['dep.set.is']
-				depMapName=props['dep.map.is']
-				depCanName=props['dep.can.is']
-				varsubFile=props['dep.vs.is']
-			break
-		case "BPM":
-				xmlTemplate="${dirTemplates}/"+props['template.base.bpm']
-				xsltTemplate="${dirTemplates}/"+props['templete.xslt.bpm']
-				targetAlias=props['target.alias.bpm']
-				targetHost=props['target.host.bpm']
-				targetPort=props['target.port.bpm']
-				targetUser=props['target.user.bpm']
-				targetPwd=props['target.pwd.bpm']
-				targetVersion=props['target.version.bpm']							
-				targetSsl=props['target.ssl.bpm']							
-				depSetName=props['dep.set.bpm']
-				depMapName=props['dep.map.bpm']
-				depCanName=props['dep.can.bpm']
-				varsubFile=props['dep.vs.bpm']
-			break	    	
-		case "MWS":
-				xmlTemplate="${dirTemplates}/"+props['template.base.mws']
-				xsltTemplate="${dirTemplates}/"+props['templete.xslt.mws']
-				targetAlias=props['target.alias.mws']
-				targetHost=props['target.host.mws']
-				targetPort=props['target.port.mws']
-				targetUser=props['target.user.mws']
-				targetPwd=props['target.pwd.mws']
-				targetVersion=props['target.version.mws']							
-				targetSsl=props['target.ssl.mws']							
-				depSetName=props['dep.set.mws']
-				depMapName=props['dep.map.mws']
-				depCanName=props['dep.can.mws']
-				varsubFile=props['dep.vs.mws']
-			break 
-		case "UM":
-				xmlTemplate="${dirTemplates}/"+props['template.base.um']
-				xsltTemplate="${dirTemplates}/"+props['templete.xslt.um']
-				targetAlias=props['target.alias.um']
-				targetHost=props['target.host.um']
-				targetPort=props['target.port.um']
-				targetUser=props['target.user.um']
-				targetPwd=props['target.pwd.um']
-				targetVersion=props['target.version.um']							
-				targetSsl=props['target.ssl.um']							
-				depSetName=props['dep.set.um']
-				depMapName=props['dep.map.um']
-				depCanName=props['dep.can.um']
-				varsubFile=props['dep.vs.um']
-			break
-		case "AGW":
-				xmlTemplate="${dirTemplates}/"+props['template.base.agw']
-				xsltTemplate="${dirTemplates}/"+props['templete.xslt.agw']
-				targetAlias=props['target.alias.agw']
-				targetHost=props['target.host.agw']
-				targetPort=props['target.port.agw']
-				targetUser=props['target.user.agw']
-				targetPwd=props['target.pwd.agw']
-				targetVersion=props['target.version.agw']							
-				targetSsl=props['target.ssl.agw']							
-				depSetName=props['dep.set.agw']
-				depMapName=props['dep.map.agw']
-				depCanName=props['dep.can.agw']
-				varsubFile=props['dep.vs.agw']
+    projectName = "${module}_${type}_${buildVersion}"   
+    repositoryAlias="${module}_Repo"
+    repositoryPath="${dirWorkspace}/builds"
+    automatorFile = "${dirWorkspace}/${module}_Automator${type}_${buildVersion}.xml"
 
-			break
-		default:
-			error("Unsupported project type : ${type}")    
-			break
-	}
-	    //For wM9.x versions ant is located in ${dirSagInstall}/common/AssetBuildEnvironment/ant/bin/ant
-	    //For wM10.x versions ant is located in ${dirSagInstall}/common/lib/ant/bin/ant
-	    
-		sh "${dirSagInstall}/common/lib/ant/bin/ant -file $dirTemplates/build-custom.xml ${buildTarget} \
+    ltype=type.toLowerCase()
+    xmlTemplate="${dirTemplates}/"+props['template.base.' + ltype]
+    depSetName=props['dep.set.' + ltype]
+    depMapName=props['dep.map.' + ltype]
+    depCanName=props['dep.can.' + ltype]
+    varsubFile=props['dep.vs.' + ltype]
+    clustered = props['cluster.alias.' + ltype]
+
+    deployerParameters = []
+    importVsParameters = []
+    if(!(clustered==null || clustered.isEmpty())) {
+        if(!(type in ["IS","BPM"])) {
+            error("Project type ${type} does not support clustered deployments.")
+        }
+        buildTarget = "createRepositoryProjectForCluster"
+        importVsTarget = "importVarSubsForCluster"
+        xsltTemplate="${dirTemplates}/AutomatorRepository${type}Cluster.xslt"
+        clusterMembers = props['cluster.members.' + ltype].split(',')
+        deployerParameters.add("-Dtarget.clusterGroupAlias=${clustered}")
+        i = 0
+        for(member in clusterMembers) {
+            importVsParameters.add("-Dtarget.alias${i}="   + props['target.alias.' + member])
+            deployerParameters.add("-Dtarget.alias${i}="   + props['target.alias.' + member])
+            deployerParameters.add("-Dtarget.host${i}="    + props['target.host.' + member])
+            deployerParameters.add("-Dtarget.port${i}="    + props['target.port.' + member])
+            deployerParameters.add("-Dtarget.user${i}="    + props['target.user.' + member])
+            deployerParameters.add("-Dtarget.pwd${i}="     + props['target.pwd.' + member])
+            deployerParameters.add("-Dtarget.version${i}=" + props['target.version.' + member])
+            deployerParameters.add("-Dtarget.ssl${i}="     + props['target.ssl.' + member])
+            i++
+        }
+    } else {
+        buildTarget = "createRepositoryProject"
+        importVsTarget = "importVarSubs"
+        xsltTemplate="${dirTemplates}/AutomatorRepository${type}.xslt"
+        importVsParameters.add("-Dtarget.alias="   + props['target.alias.' + ltype])
+        deployerParameters.add("-Dtarget.alias="   + props['target.alias.' + ltype])
+        deployerParameters.add("-Dtarget.host="    + props['target.host.' + ltype])
+        deployerParameters.add("-Dtarget.port="    + props['target.port.' + ltype])
+        deployerParameters.add("-Dtarget.user="    + props['target.user.' + ltype])
+        deployerParameters.add("-Dtarget.pwd="     + props['target.pwd.' + ltype])
+        deployerParameters.add("-Dtarget.version=" + props['target.version.' + ltype])
+        deployerParameters.add("-Dtarget.ssl="     + props['target.ssl.' + ltype])
+    }
+
+        
+    //For wM9.x versions ant is located in ${dirSagInstall}/common/AssetBuildEnvironment/ant/bin/ant
+    //For wM10.x versions ant is located in ${dirSagInstall}/common/lib/ant/bin/ant
+        
+    sh "${dirSagInstall}/common/lib/ant/bin/ant -file $dirTemplates/build-custom.xml ${buildTarget} \
         -Dsag.install.dir=${dirSagInstall}\
-		-Dautomator.file=${automatorFile} \
-		-Dautomator.template=${xmlTemplate} \
-		-Dxslt.template=${xsltTemplate} \
-		-Ddeployer.home=${deployerHome} \
-		-Ddeployer.host=${deployerHost} \
-		-Ddeployer.port=${deployerPort} \
-		-Ddeployer.user=${deployerUser} \
-		-Ddeployer.pwd=${deployerPwd} \
-		-Drepository.alias=${repositoryAlias} \
-		-Drepository.path=${repositoryPath} \
-		-Dproj.name=${projectName}\
-		-Ddeployment.name=${depSetName} \
-		-Dmap.name=${depMapName} \
-		-Dcandidate.name=${depCanName} \
-		-Dcomposite.name=${assetPrefix} \
-		-Dbuild.version=${buildVersion} \
-		${deployerParameters}.join(' ')"								
+        -Dautomator.file=${automatorFile} \
+        -Dautomator.template=${xmlTemplate} \
+        -Dxslt.template=${xsltTemplate} \
+        -Ddeployer.home=${deployerHome} \
+        -Ddeployer.host=${deployerHost} \
+        -Ddeployer.port=${deployerPort} \
+        -Ddeployer.user=${deployerUser} \
+        -Ddeployer.pwd=${deployerPwd} \
+        -Drepository.alias=${repositoryAlias} \
+        -Drepository.path=${repositoryPath} \
+        -Dproj.name=${projectName}\
+        -Ddeployment.name=${depSetName} \
+        -Dmap.name=${depMapName} \
+        -Dcandidate.name=${depCanName} \
+        -Dcomposite.name=${assetPrefix} \
+        -Dbuild.version=${buildVersion} \
+        ${deployerParameters}.join(' ')"
 
-		try {
-			sh "${dirSagInstall}/common/lib/ant/bin/ant -file $dirTemplates/build-custom.xml importVarSubs \
-				-Dsag.install.dir=${dirSagInstall} \
-				-Dvs.dir=${dirAssetVs} \
-				-Dvs.file=${varsubFile} \
-				-Ddeployer.home=${deployerHome} \
-				-Ddeployer.host=${deployerHost} \
-				-Ddeployer.port=${deployerPort} \
-				-Ddeployer.user=${deployerUser} \
-				-Ddeployer.pwd=${deployerPwd} \
-				-Drepository.alias=${repositoryAlias} \
-				-Dproj.name=${projectName}\
-				-Ddeployment.name=${depSetName} \
-				-Dmap.name=${depMapName} \
-				-Dproj.map=$depMapName \
-				${importVsParameters}.join(' ')"
-		} catch (Exception e) {
-				echo "Error during varsub import. Check the corresponding varsub file or perform the operations manually"
-				currentBuild.currentResult = "UNSTABLE"
-		}	
+    try {
+        sh "${dirSagInstall}/common/lib/ant/bin/ant -file $dirTemplates/build-custom.xml ${importVsTarget} \
+            -Dsag.install.dir=${dirSagInstall} \
+            -Dvs.dir=${dirAssetVs} \
+            -Dvs.file=${varsubFile} \
+            -Ddeployer.home=${deployerHome} \
+            -Ddeployer.host=${deployerHost} \
+            -Ddeployer.port=${deployerPort} \
+            -Ddeployer.user=${deployerUser} \
+            -Ddeployer.pwd=${deployerPwd} \
+            -Drepository.alias=${repositoryAlias} \
+            -Dproj.name=${projectName}\
+            -Ddeployment.name=${depSetName} \
+            -Dmap.name=${depMapName} \
+            -Dproj.map=$depMapName \
+            ${importVsParameters}.join(' ')"
+    } catch (Exception e) {
+        echo "Error during varsub import. Check the corresponding varsub file or perform the operations manually"
+        currentBuild.currentResult = "UNSTABLE"
+    }   
 
 }
 
