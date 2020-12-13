@@ -86,9 +86,9 @@ pipeline {
             steps {
                 script {
                     
-                    branchOrTagToCheckout = sh(
+                    branchOrTagToCheckout = sh'(
                         script: 'echo ${TAG:-${BRANCH}}',
-                        returnStdout: true).trim()
+                        returnStdout: true).trim()'
                     module = MODULE.trim().toLowerCase()
                     targetEnvironment = ENVIRONMENT.trim().toLowerCase()
                     //Update build display
