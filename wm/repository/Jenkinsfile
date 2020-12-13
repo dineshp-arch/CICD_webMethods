@@ -231,7 +231,7 @@ pipeline {
 
     }
 
-
+}
 
 def buildAsRepo(props, dirWorkspace, buildVersion, enableIsBuild, enableBpmBuild, enableMwsBuild, enableUmBuild, enableAgwBuild, targetPackages) {
     if(props['dir.asset.root']!=null && !props['dir.asset.root'].isEmpty()) {
@@ -479,5 +479,6 @@ def uploadArchive(props,dirWorkspace,buildVersion) {
 
     }       
 }
+
 
 // vim: ts=4 sw=4 expandtab:
