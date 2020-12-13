@@ -170,12 +170,12 @@ pipeline {
                 expression {"${params.MODE}" == "Build&Deploy"}
                 }    
             }
-            stages {
-                stage ('IS') {
+            stage ('IS') {
                     when {
+			allOf {
                         expression { "${params.ENABLE_IS_BUILD}" == 'true' }
-                       }
-                    
+                       		}
+			}
                     steps {
                         createProject(props,"${dirWorkspace}","${dirUtils}","${params.MODULE}","*","IS","${params.BUILD_VERSION}") 
                         deployProject(props,"${params.MODULE}","IS","${params.BUILD_VERSION}")
