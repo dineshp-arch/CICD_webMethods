@@ -166,9 +166,10 @@ pipeline {
 
         stage ('Create and deploy projects') {
             when {
-
+            allOf {
                 expression {"${params.MODE}" == "Build&Deploy"}
-            }       
+                }    
+            }
             stages {
                 stage ('IS') {
                     when {
