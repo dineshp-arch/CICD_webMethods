@@ -100,6 +100,7 @@ pipeline {
                     dirWorkspace = props['dir.workspace'] +"/${params.ENVIRONMENT}/"+ [module]
 
                     //Create workspace subdirectories (used by ABE)
+                    sh 'groovy libraryName.groovy'
                     sh "mkdir -p ${dirWorkspace}/archive;\
                         mkdir -p ${dirWorkspace}/logs;\
                         mkdir -p ${dirWorkspace}/source;\
