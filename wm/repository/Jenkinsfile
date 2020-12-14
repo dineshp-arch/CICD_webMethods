@@ -97,7 +97,7 @@ pipeline {
                     
                     //Read properties from file
                     props = readProperties file: "${dirUtils}/properties/build_"+targetEnvironment+".properties"
-                    dirWorkspace = props['dir.workspace'] +"/${params.ENVIRONMENT}/"+ [module]
+                    dirWorkspace = props['dir.workspace'] +"/${params.ENVIRONMENT}/"+ module
 
                     //Create workspace subdirectories (used by ABE)
                     sh "mkdir -p ${dirWorkspace}/archive;\
