@@ -245,11 +245,11 @@ def buildAsRepo(props, dirWorkspace, buildVersion, enableIsBuild, enableBpmBuild
     sourceUrlAGW=props['source.url.agw']
     sourceUserAGW=props['source.user.agw']
     sourcePwdAGW=props['source.pwd.agw']
-        sourceAssetFileAGW="${assetsDir}/${dirAssetAGW}/"+props['source.assets.file.agw']
+    sourceAssetFileAGW="${dirWorkspace}/source/${dirAssetAGW}/"+props['source.assets.file.agw']
 
     abeISSourceArray = []
     for(p in targetPackages) {
-        abeISSourceArray.add(assetsDir + "/" + dirAssetIS + "/" + p)
+        abeISSourceArray.add(dirSagInstall + "/" + dirAssetIS + "/" + p)
     }
     abeISSources = abeISSourceArray.join(";")
 
@@ -257,9 +257,8 @@ def buildAsRepo(props, dirWorkspace, buildVersion, enableIsBuild, enableBpmBuild
     
     sh "${dirSagInstall}/common/AssetBuildEnvironment/bin/build.sh\
         -Dsag.install.dir=${dirSagInstall}\
-        -Dbuild.source.dir=${assetsDir}/$dirAssetBPM\\;${assetsDir}/$dirAssetMWS\\;${assetsDir}/$dirAssetUM\
+        -Dbuild.source.dir=${dirWorkspace}/source/$dirAssetIS\\;${dirWorkspace}/source/$dirAssetBPM\\;${dirWorkspace}/source/$dirAssetMWS\\;${dirWorkspace}/source/$dirAssetUM\
         -Dbuild.source.project.dir=${abeISSources} \
-        -Dis.acdl.config.dir=${assetsDir}/${dirAssetIS}/config \
         -Dbuild.output.dir=${dirWorkspace}/builds\
         -Dbuild.version=${buildVersion}\
         -Dbuild.archive.dir=${dirWorkspace}/archive\
