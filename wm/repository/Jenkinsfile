@@ -290,18 +290,18 @@ def createProject(props, dirWorkspace, dirUtils, module, assetPrefix, type, buil
     dirTemplates="${workspace}/${dirUtils}/templates"
     dirAssetVs="${dirWorkspace}/source/"+props['dir.asset.vs']
     
-	deployerHome=props['dir.install.build']+"/"+props['dir.install.deployer']
-	deployerHost=props['deployer.host']	
-	deployerPort=props['deployer.port']
-	deployerUser=props['deployer.user']
-	deployerPwd=props['deployer.pwd']
-    
-	projectName = "${module}_${type}_${buildVersion}"	
-	repositoryAlias="${module}_Repo"
-	repositoryPath="${dirWorkspace}/builds"
-	automatorFile = "${dirWorkspace}/${module}_Automator${type}_${buildVersion}.xml"
-	
-	ltype=type.toLowerCase()
+    deployerHome=props['dir.install.build']+"/"+props['dir.install.deployer']
+    deployerHost=props['deployer.host']	
+    deployerPort=props['deployer.port']
+    deployerUser=props['deployer.user']
+    deployerPwd=props['deployer.pwd']
+
+    projectName = "${module}_${type}_${buildVersion}"	
+    repositoryAlias="${module}_Repo"
+    repositoryPath="${dirWorkspace}/builds"
+    automatorFile = "${dirWorkspace}/${module}_Automator${type}_${buildVersion}.xml"
+
+    ltype=type.toLowerCase()
     xmlTemplate="${dirTemplates}/"+props['template.base.' + ltype]
     depSetName=props['dep.set.' + ltype]
     depMapName=props['dep.map.' + ltype]
@@ -311,8 +311,8 @@ def createProject(props, dirWorkspace, dirUtils, module, assetPrefix, type, buil
 
     deployerParameters = []
     importVsParameters = []
-	
-	if(!(clustered==null || clustered.isEmpty())) {
+    
+    if(!(clustered==null || clustered.isEmpty())) {
         if(!(type in ["IS","BPM"])) {
             error("Project type ${type} does not support clustered deployments.")
         }
@@ -347,92 +347,10 @@ def createProject(props, dirWorkspace, dirUtils, module, assetPrefix, type, buil
         deployerParameters.add("-Dtarget.ssl="     + props['target.ssl.' + ltype])
     }
 
-    /*    
-    switch("${type}") {
-        case "IS":
-                xmlTemplate="${dirTemplates}/"+props['template.base.is']
-                xsltTemplate="${dirTemplates}/"+props['templete.xslt.is']
-                targetAlias=props['target.alias.is']
-                targetHost=props['target.host.is']
-                targetPort=props['target.port.is']
-                targetUser=props['target.user.is']
-                targetPwd=props['target.pwd.is']
-                targetVersion=props['target.version.is']							
-                targetSsl=props['target.ssl.is']							
-                depSetName=props['dep.set.is']
-                depMapName=props['dep.map.is']
-                depCanName=props['dep.can.is']
-                varsubFile=props['dep.vs.is']
-            break
-        case "BPM":
-                xmlTemplate="${dirTemplates}/"+props['template.base.bpm']
-                xsltTemplate="${dirTemplates}/"+props['templete.xslt.bpm']
-                targetAlias=props['target.alias.bpm']
-                targetHost=props['target.host.bpm']
-                targetPort=props['target.port.bpm']
-                targetUser=props['target.user.bpm']
-                targetPwd=props['target.pwd.bpm']
-                targetVersion=props['target.version.bpm']							
-                targetSsl=props['target.ssl.bpm']							
-                depSetName=props['dep.set.bpm']
-                depMapName=props['dep.map.bpm']
-                depCanName=props['dep.can.bpm']
-                varsubFile=props['dep.vs.bpm']
-            break	    	
-        case "MWS":
-                xmlTemplate="${dirTemplates}/"+props['template.base.mws']
-                xsltTemplate="${dirTemplates}/"+props['templete.xslt.mws']
-                targetAlias=props['target.alias.mws']
-                targetHost=props['target.host.mws']
-                targetPort=props['target.port.mws']
-                targetUser=props['target.user.mws']
-                targetPwd=props['target.pwd.mws']
-                targetVersion=props['target.version.mws']							
-                targetSsl=props['target.ssl.mws']							
-                depSetName=props['dep.set.mws']
-                depMapName=props['dep.map.mws']
-                depCanName=props['dep.can.mws']
-                varsubFile=props['dep.vs.mws']
-            break 
-        case "UM":
-                xmlTemplate="${dirTemplates}/"+props['template.base.um']
-                xsltTemplate="${dirTemplates}/"+props['templete.xslt.um']
-                targetAlias=props['target.alias.um']
-                targetHost=props['target.host.um']
-                targetPort=props['target.port.um']
-                targetUser=props['target.user.um']
-                targetPwd=props['target.pwd.um']
-                targetVersion=props['target.version.um']
-                targetSsl=props['target.ssl.um']
-                depSetName=props['dep.set.um']
-                depMapName=props['dep.map.um']
-                depCanName=props['dep.can.um']
-                varsubFile=props['dep.vs.um']
-            break
-        case "AGW":
-                xmlTemplate="${dirTemplates}/"+props['template.base.agw']
-                xsltTemplate="${dirTemplates}/"+props['templete.xslt.agw']
-                targetAlias=props['target.alias.agw']
-                targetHost=props['target.host.agw']
-                targetPort=props['target.port.agw']
-                targetUser=props['target.user.agw']
-                targetPwd=props['target.pwd.agw']
-                targetVersion=props['target.version.agw']
-                targetSsl=props['target.ssl.agw']
-                depSetName=props['dep.set.agw']
-                depMapName=props['dep.map.agw']
-                depCanName=props['dep.can.agw']
-                varsubFile=props['dep.vs.agw']
-            break
-        default:
-            error("Unsupported project type : ${type}")
-            break
-    }
-    */
     //For wM9.x versions ant is located in ${dirSagInstall}/common/AssetBuildEnvironment/ant/bin/ant
     //For wM10.x versions ant is located in ${dirSagInstall}/common/lib/ant/bin/ant
     
-    deployCmd="${dirSagInstall}/common/lib/ant/bin/ant -file $dirTemplates/build-custom.xml ${buildTarget} \
+    createProjectCmd="${dirSagInstall}/common/lib/ant/bin/ant -file $dirTemplates/build-custom.xml ${buildTarget} \
         -Dsag.install.dir=${dirSagInstall}\
         -Dautomator.file=${automatorFile} \
         -Dautomator.template=${xmlTemplate} \
@@ -451,7 +369,7 @@ def createProject(props, dirWorkspace, dirUtils, module, assetPrefix, type, buil
         -Dcomposite.name=${assetPrefix} \
         -Dbuild.version=${buildVersion} \
         ${deployerParameters.join(' ')}"
-    importVarSubCmd="${dirSagInstall}/common/lib/ant/bin/ant -file $dirTemplates/build-custom.xml ${importVarSubs} \
+    importVarSubCmd="${dirSagInstall}/common/lib/ant/bin/ant -file $dirTemplates/build-custom.xml ${importVsTarget} \
             -Dsag.install.dir=${dirSagInstall} \
             -Dvs.dir=${dirAssetVs} \
             -Dvs.file=${varsubFile} \
@@ -465,14 +383,19 @@ def createProject(props, dirWorkspace, dirUtils, module, assetPrefix, type, buil
             -Ddeployment.name=${depSetName} \
             -Dmap.name=${depMapName} \
             -Dproj.map=$depMapName \
-            -Dtarget.alias=${targetAlias} \
             ${importVsParameters.join(' ')}"
-    echo "${deployCmd}"
-    try {
-        echo "${importVarSubCmd}"
-    } catch (Exception e) {
+            
+    if(params.DRYRUN == "false") {
+        sh "${createProjectCmd}"
+        try {
+            sh "${importVarSubCmd}"
+        } catch (Exception e) {
             echo "Error during varsub import. Check the corresponding varsub file or perform the operations manually"
             currentBuild.currentResult = "UNSTABLE"
+        }
+    } else {
+        echo "createProjectCmd is : ${createProjectCmd}"
+        echo "importVarSubCmd is : ${importVarSubCmd}"
     }
 }
 
@@ -488,27 +411,7 @@ def deployProject(props, module, type, buildVersion) {
     deployerUser=props['deployer.user']
     deployerPwd=props['deployer.pwd']
     depCanName=props['dep.can.'+ltype]
-    /*
-    switch("${type}") {
-        case "IS":			
-                depCanName=props['dep.can.is']
-            break
-        case "BPM":
-                depCanName=props['dep.can.bpm']		
-            break	    	
-        case "MWS":
-                depCanName=props['dep.can.mws']		
-            break 
-        case "UM":
-                depCanName=props['dep.can.um']		
-            break
-        case "AGW":
-                depCanName=props['dep.can.agw']		
-            break
-        default:
-            error("Unsupported project type : ${type}")    
-            break
-    }*/
+
     
     checkPointCmd="${deployerHome}/bin/Deployer.sh \
             --checkpoint -project ${projectName} \
@@ -517,15 +420,20 @@ def deployProject(props, module, type, buildVersion) {
             -port ${deployerPort} \
             -user ${deployerUser} \
             -pwd ${deployerPwd}"
-    deployCmd"${deployerHome}/bin/Deployer.sh --deploy \
+    deployCmd="${deployerHome}/bin/Deployer.sh --deploy \
             -project ${projectName} \
             -dc ${depCanName} \
             -host ${deployerHost} \
             -port ${deployerPort} \
             -user ${deployerUser} \
             -pwd ${deployerPwd}"
-     echo "${checkPointCmd}"
-     echo "${deployCmd}"
+     if(params.DRYRUN == "false") {
+        sh "${checkPointCmd}"
+        sh "${deployCmd}"
+     } else {
+        echo "checkPointCmd is : ${checkPointCmd}"
+        echo "deployCmd is : ${deployCmd}"
+     }
 
 }
 
