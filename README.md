@@ -228,9 +228,9 @@ To do so:
 4. Rename this file to the value provided by the property `dep.vs.<component>` defined in the environment build.properties file.
 	* For example, by default, for IS assets, this file must be name "esb.vs"
 5. Within this file, replace the values of the following parameters:
-	* `targetServerName` with  `TARGET_ALIAS`
-	* `ServerAliasName` with `REPO_ALIAS`
-	* `deploymentSetName` with `DEPSET_NAME`
+	* `targetServerName` with  `@TARGET_ALIAS@`
+	* `ServerAliasName` with `@REPO_ALIAS@`
+	* `deploymentSetName` with `@DEPSET_NAME@`
 	* For example, replace : 
 `<DeploymentSet allowEmptyValues="false" assetCompositeName="JcUMQueueManager" deploymentSetName="ISDepSet" serverAliasName="BBUS_Repo" targetServerName="SAGISINT" targetServerType="IS">`
 	* With: 

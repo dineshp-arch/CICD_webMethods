@@ -15,8 +15,6 @@ node {
     brancheParams = readFile "${dirUtils}/parameters/branches.properties"
     envParams = readFile "${dirUtils}/parameters/env.properties"
     moduleParams = readFile "${dirUtils}/parameters/modules.properties"
-    
-    MODE="Build&Deploy"
 }
 
 pipeline {
@@ -321,7 +319,7 @@ def createProject(props, dirWorkspace, dirUtils, module, assetPrefix, type, buil
         xsltTemplate="${dirTemplates}/AutomatorRepository${type}Cluster.xslt"
         clusterMembers = props['cluster.members.' + ltype].split(',')
         deployerParameters.add("-Dtarget.clusterGroupAlias=${clustered}")
-        i = 0
+        i = 1
         for(member in clusterMembers) {
             importVsParameters.add("-Dtarget.alias${i}="   + props['target.alias.' + member])
             deployerParameters.add("-Dtarget.alias${i}="   + props['target.alias.' + member])
