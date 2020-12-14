@@ -275,11 +275,11 @@ Run created job by providing inputs parameters :
 * `BRANCH` : module branch to build (values defined in parameters/branches.properties file)
 * `TAG` : module tag to build (values manualy set by the user)
 * `ENVIRONMENT` : target environment (values defined in paramaters/env.propertiesd file)
-* `ENABLE\_IS\_BUILD` : Integration server build (true|false)
-* `ENABLE\_BPM\_BUILD` : Process models build (true|false)
-* `ENABLE\_MWS\_BUILD` : My webMethods Server build (true|false)
-* `ENABLE\_UM\_BUILD` : Universal Messaging build (true|false)
-* `ENABLE\_AGW\_BUILD` : API Gateway build (true|false)
+* `ENABLE_IS_BUILD` : Integration server build (true|false)
+* `ENABLE_BPM_BUILD` : Process models build (true|false)
+* `ENABLE_MWS_BUILD` : My webMethods Server build (true|false)
+* `ENABLE_UM_BUILD` : Universal Messaging build (true|false)
+* `ENABLE_AGW_BUILD` : API Gateway build (true|false)
 
 Note: Source code is checkout from the selected Branch unless the user provide a TAG.
 
@@ -292,7 +292,7 @@ Depending on parameters provided as inputs, below stages will be executed :
 1. Prepare workspace : always
 2. Checkout source code : always
 3. Build source code : always
-4. Deploy source code : any of ENABLE\_xxx\_BUILD=true
+4. Deploy source code : any of `ENABLE_xxx_BUILD=true`
 
 
 _______________
