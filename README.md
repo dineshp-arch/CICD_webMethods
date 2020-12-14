@@ -54,7 +54,7 @@ Add the different credentials that will be used by the framework (Jenkins > Cred
 
 ### Update build_\<env\>.properties
 
-In order to configure the environment update build_<env>.properties file located in "properties" folder. 
+In order to configure the environment update build_\<env\>.properties file located in "properties" folder. 
 
 #### Workspace 
 
@@ -83,10 +83,10 @@ dir.<MODULE>=<DIRECTORY_ASSET>
 
 Where :
 
-* GIT_REPSOITROY_URL : git repository url where the assets are located
-* GIT_CREDENTIAL : git credential ID as configured in the Jenkins instance
-* DIRECTORY_ASSET : assets checkout folder
-* MODULE : Module name as defined in "parameters/module.properties" file
+* `GIT_REPSOITROY_URL` : git repository url where the assets are located
+* `GIT_CREDENTIAL` : git credential ID as configured in the Jenkins instance
+* `DIRECTORY_ASSET` : assets checkout folder
+* `MODULE` : Module name as defined in "parameters/module.properties" file
 
 Folders structure can be updated according to your needs, for example :
 
@@ -141,9 +141,9 @@ deployer.pwd=<DEP_PWD>
 
 Where :
 
-* SAG_INSTALL_DIR : root installation directory
-* SAG_DEP_PATH : relative path to WmDeployer root directory (IntegrationServer/instances/<INSTACE>/packages/WmDeployer)
-* DEP_HOST|PORT|USER|PWD : WmDeployer parameters
+* `SAG_INSTALL_DIR` : root installation directory
+* `SAG_DEP_PATH` : relative path to WmDeployer root directory (IntegrationServer/instances/<INSTACE>/packages/WmDeployer)
+* `DEP_HOST|PORT|USER|PWD` : WmDeployer parameters
 
 #### Target servers configuration
 
@@ -162,19 +162,18 @@ target.ssl.<COMPONENT>=false|true
 Where COMPONENT can have the following values : 
 
 
-* is : Integration Server target
-* bpm : Process Engine target
-* um : Universal Messaging target
-* mws : My webMethods server target
-* agw : API Gateway server target
+* `is` : Integration Server target
+* `bpm` : Process Engine target
+* `um` : Universal Messaging target
+* `mws` : My webMethods server target
+* `agw` : API Gateway server target
 
 For API Gateway only, update the following properties in order to extract assets from a source API Gateway : 
 
-* source.url.agw : source API Gateway URL
-* source.user.agw : source API Gateway user
-* source.pwd.agw: source API Gateway password
-* source.assets.file.agw : json extraction file (refer to API Gateway documentation) 
-
+* `source.url.agw` : source API Gateway URL
+* `source.user.agw` : source API Gateway user
+* `source.pwd.agw:` source API Gateway password
+* `source.assets.file.agw` : json extraction file (refer to API Gateway documentation) 
 
 #### Target Cluster configuration
 
@@ -194,6 +193,16 @@ target.ssl.<Member#N>=false|true
 Where `<Member#N>` must match one member of the `cluster.members.<COMPONENT>` list.
 
 Note: Only 2 nodes cluster are supported by this Jenkinsfile.
+
+
+#### Package exclusion
+
+In order to exclude packages from the build, configure the following property
+```
+is.packages.exclude.bbus=<list of packages>
+```
+
+Where `list of packages` is a coma seprated list of packages names to be excluded from the build.
 
 
 
@@ -260,16 +269,19 @@ Where :
 
 Run created job by providing inputs parameters :
 
-* MODE : Build or Build and Deploy
-* BUILD_VERSION : Build version (xxx)
-* MODULE : module to build (values defined in parameters/module.properties file)
-* BRANCH : module branch to build (values defined in parameters/branches.properties file)
-* ENVIRONMENT : target environment
-* ENABLE\_IS\_BUILD : Integration server build (true|false)
-* ENABLE\_BPM\_BUILD : Process models build (true|false)
-* ENABLE\_MWS\_BUILD : My webMethods Server build (true|false)
-* ENABLE\_UM\_BUILD : Universal Messaging build (true|false)
-* ENABLE\_AGW\_BUILD : API Gateway build (true|false)
+* `MODE` : Build or Build and Deploy
+* `BUILD_VERSION` : Build version (xxx)
+* `MODULE` : module to build (values defined in parameters/module.properties file)
+* `BRANCH` : module branch to build (values defined in parameters/branches.properties file)
+* `TAG` : module tag to build (values manualy set by the user)
+* `ENVIRONMENT` : target environment (values defined in paramaters/env.propertiesd file)
+* `ENABLE\_IS\_BUILD` : Integration server build (true|false)
+* `ENABLE\_BPM\_BUILD` : Process models build (true|false)
+* `ENABLE\_MWS\_BUILD` : My webMethods Server build (true|false)
+* `ENABLE\_UM\_BUILD` : Universal Messaging build (true|false)
+* `ENABLE\_AGW\_BUILD` : API Gateway build (true|false)
+
+Note: Source code is checkout from the selected Branch unless the user provide a TAG.
 
 ## Pipeline workflow
 
