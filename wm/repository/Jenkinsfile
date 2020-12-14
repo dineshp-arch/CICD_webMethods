@@ -159,7 +159,7 @@ pipeline {
             steps {
                         
                     buildAsRepo(props,"${dirWorkspace}","${params.BUILD_VERSION}.${BUILD_ID}","${params.ENABLE_IS_BUILD}","${params.ENABLE_BPM_BUILD}","${params.ENABLE_MWS_BUILD}","${params.ENABLE_UM_BUILD}","${params.ENABLE_AGW_BUILD}", targetPackages)
-                    uploadArchive(props,"${dirWorkspace}","${params.BUILD_VERSION}.${BUILD_ID}")
+                    //uploadArchive(props,"${dirWorkspace}","${params.BUILD_VERSION}.${BUILD_ID}")
                 
                 }
             }
