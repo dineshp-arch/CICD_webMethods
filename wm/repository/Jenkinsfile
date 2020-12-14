@@ -234,11 +234,6 @@ pipeline {
 }
 
 def buildAsRepo(props, dirWorkspace, buildVersion, enableIsBuild, enableBpmBuild, enableMwsBuild, enableUmBuild, enableAgwBuild, targetPackages) {
-    if(props['dir.asset.root']!=null && !props['dir.asset.root'].isEmpty()) {
-        assetsDir = dirWorkspace + "/source/" + props['dir.asset.root']
-    } else {
-        assetsDir = dirWorkspace + "/source"
-    }
     
     dirSagInstall=props['dir.install.build']
     dirAssetIS=props['dir.asset.is']
@@ -250,7 +245,7 @@ def buildAsRepo(props, dirWorkspace, buildVersion, enableIsBuild, enableBpmBuild
     sourceUrlAGW=props['source.url.agw']
     sourceUserAGW=props['source.user.agw']
     sourcePwdAGW=props['source.pwd.agw']
-    sourceAssetFileAGW="${assetsDir}/${dirAssetAGW}/"+props['source.assets.file.agw']
+        sourceAssetFileAGW="${assetsDir}/${dirAssetAGW}/"+props['source.assets.file.agw']
 
     abeISSourceArray = []
     for(p in targetPackages) {
