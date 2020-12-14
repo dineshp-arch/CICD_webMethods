@@ -258,7 +258,7 @@ def buildAsRepo(props, dirWorkspace, buildVersion, enableIsBuild, enableBpmBuild
     sh "${dirSagInstall}/common/AssetBuildEnvironment/bin/build.sh\
         -Dsag.install.dir=${dirSagInstall}\
         -Dbuild.source.dir=${dirWorkspace}/source/$dirAssetIS\\;${dirWorkspace}/source/$dirAssetBPM\\;${dirWorkspace}/source/$dirAssetMWS\\;${dirWorkspace}/source/$dirAssetUM\
-        -Dbuild.source.project.dir=${abeISSources} \
+        -Dbuild.source.project.dir=${abeISSources}\
         -Dbuild.output.dir=${dirWorkspace}/builds\
         -Dbuild.version=${buildVersion}\
         -Dbuild.archive.dir=${dirWorkspace}/archive\
