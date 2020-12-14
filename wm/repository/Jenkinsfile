@@ -81,9 +81,8 @@ pipeline {
         choice(
             choices: ['false','true'],
             description: 'Dry-run only',
-            name: 'DRYRUN',
-            defaultValue: 'false'
-        )
+            name: 'DRYRUN'
+         )
     } // parameters
 
     stages {
@@ -433,7 +432,7 @@ def createProject(props, dirWorkspace, dirUtils, module, assetPrefix, type, buil
     //For wM9.x versions ant is located in ${dirSagInstall}/common/AssetBuildEnvironment/ant/bin/ant
     //For wM10.x versions ant is located in ${dirSagInstall}/common/lib/ant/bin/ant
     
-    echo "${dirSagInstall}/common/lib/ant/bin/ant -file $dirTemplates/build-custom.xml ${buildTarget} \
+    deployCmd="${dirSagInstall}/common/lib/ant/bin/ant -file $dirTemplates/build-custom.xml ${buildTarget} \
         -Dsag.install.dir=${dirSagInstall}\
         -Dautomator.file=${automatorFile} \
         -Dautomator.template=${xmlTemplate} \
@@ -452,9 +451,7 @@ def createProject(props, dirWorkspace, dirUtils, module, assetPrefix, type, buil
         -Dcomposite.name=${assetPrefix} \
         -Dbuild.version=${buildVersion} \
         ${deployerParameters.join(' ')}"
-        
-    try {
-        echo "${dirSagInstall}/common/lib/ant/bin/ant -file $dirTemplates/build-custom.xml ${importVarSubs} \
+    importVarSubCmd="${dirSagInstall}/common/lib/ant/bin/ant -file $dirTemplates/build-custom.xml ${importVarSubs} \
             -Dsag.install.dir=${dirSagInstall} \
             -Dvs.dir=${dirAssetVs} \
             -Dvs.file=${varsubFile} \
@@ -470,6 +467,9 @@ def createProject(props, dirWorkspace, dirUtils, module, assetPrefix, type, buil
             -Dproj.map=$depMapName \
             -Dtarget.alias=${targetAlias} \
             ${importVsParameters.join(' ')}"
+    echo "${deployCmd}"
+    try {
+        echo "${importVarSubCmd}"
     } catch (Exception e) {
             echo "Error during varsub import. Check the corresponding varsub file or perform the operations manually"
             currentBuild.currentResult = "UNSTABLE"
@@ -510,20 +510,22 @@ def deployProject(props, module, type, buildVersion) {
             break
     }*/
     
-    echo "${deployerHome}/bin/Deployer.sh \
+    checkPointCmd="${deployerHome}/bin/Deployer.sh \
             --checkpoint -project ${projectName} \
             -dc ${depCanName} \
             -host ${deployerHost} \
             -port ${deployerPort} \
             -user ${deployerUser} \
             -pwd ${deployerPwd}"
-    echo "${deployerHome}/bin/Deployer.sh --deploy \
+    deployCmd"${deployerHome}/bin/Deployer.sh --deploy \
             -project ${projectName} \
             -dc ${depCanName} \
             -host ${deployerHost} \
             -port ${deployerPort} \
             -user ${deployerUser} \
             -pwd ${deployerPwd}"
+     echo "${checkPointCmd}"
+     echo "${deployCmd}"
 
 }
 
