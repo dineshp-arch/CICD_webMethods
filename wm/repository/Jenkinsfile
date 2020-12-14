@@ -233,7 +233,12 @@ pipeline {
 
 }
 
-def buildAsRepo(props, dirWorkspace, buildVersion, enableIsBuild, enableBpmBuild, enableMwsBuild, enableUmBuild, enableAgwBuild) {
+def buildAsRepo(props, dirWorkspace, buildVersion, enableIsBuild, enableBpmBuild, enableMwsBuild, enableUmBuild, enableAgwBuild, targetPackages) {
+    if(props['dir.asset.root']!=null && !props['dir.asset.root'].isEmpty()) {
+        assetsDir = dirWorkspace + "/source/" + props['dir.asset.root']
+    } else {
+        assetsDir = dirWorkspace + "/source"
+    }
     
     dirSagInstall=props['dir.install.build']
     dirAssetIS=props['dir.asset.is']
@@ -245,27 +250,36 @@ def buildAsRepo(props, dirWorkspace, buildVersion, enableIsBuild, enableBpmBuild
     sourceUrlAGW=props['source.url.agw']
     sourceUserAGW=props['source.user.agw']
     sourcePwdAGW=props['source.pwd.agw']
-    sourceAssetFileAGW="${dirWorkspace}/source/${dirAssetAGW}/"+props['source.assets.file.agw']
-	sh "rm -rf ${dirWorkspace}/builds/*"
-	
-	sh "${dirSagInstall}/common/AssetBuildEnvironment/bin/build.sh\
-         -Dsag.install.dir=${dirSagInstall}\
-         -Dbuild.source.dir=${dirWorkspace}/source/$dirAssetIS\\;${dirWorkspace}/source/$dirAssetBPM\\;${dirWorkspace}/source/$dirAssetMWS\\;${dirWorkspace}/source/$dirAssetUM\
-         -Dbuild.output.dir=${dirWorkspace}/builds\
-         -Dbuild.version=${buildVersion}\
-         -Dbuild.archive.dir=${dirWorkspace}/archive\
-         -Dbuild.log.fileName=${dirWorkspace}/logs/log_" + "${buildVersion}" + ".txt\
-         -Denable.build.IS=${enableIsBuild}\
-         -Denable.build.BPM=${enableBpmBuild}\
-         -Denable.build.MWS=${enableMwsBuild}\
-         -Denable.build.UniversalMessaging=${enableUmBuild}\
-		 -Denable.build.APIGateway=$enableAgwBuild\
-		 -Dapigateway.is.url=$sourceUrlAGW\
-		 -Dapigateway.is.username=$sourceUserAGW\
-		 -Dapigateway.is.password=$sourcePwdAGW\
-		 -Dapigateway.assets.file=$sourceAssetFileAGW\
-		 -Dapigateway.useLocalRepo=false\
-         -Denable.archive=true"
+    sourceAssetFileAGW="${assetsDir}/${dirAssetAGW}/"+props['source.assets.file.agw']
+
+    abeISSourceArray = []
+    for(p in targetPackages) {
+        abeISSourceArray.add(assetsDir + "/" + dirAssetIS + "/" + p)
+    }
+    abeISSources = abeISSourceArray.join(";")
+
+    sh "rm -rf ${dirWorkspace}/builds/*"
+    
+    sh "${dirSagInstall}/common/AssetBuildEnvironment/bin/build.sh\
+        -Dsag.install.dir=${dirSagInstall}\
+        -Dbuild.source.dir=${assetsDir}/$dirAssetBPM\\;${assetsDir}/$dirAssetMWS\\;${assetsDir}/$dirAssetUM\
+        -Dbuild.source.project.dir=${abeISSources} \
+        -Dis.acdl.config.dir=${assetsDir}/${dirAssetIS}/config \
+        -Dbuild.output.dir=${dirWorkspace}/builds\
+        -Dbuild.version=${buildVersion}\
+        -Dbuild.archive.dir=${dirWorkspace}/archive\
+        -Dbuild.log.fileName=${dirWorkspace}/logs/log_" + "${buildVersion}" + ".txt\
+        -Denable.build.IS=${enableIsBuild}\
+        -Denable.build.BPM=${enableBpmBuild}\
+        -Denable.build.MWS=${enableMwsBuild}\
+        -Denable.build.UniversalMessaging=${enableUmBuild}\
+        -Denable.build.APIGateway=$enableAgwBuild\
+        -Dapigateway.is.url=$sourceUrlAGW\
+        -Dapigateway.is.username=$sourceUserAGW\
+        -Dapigateway.is.password=$sourcePwdAGW\
+        -Dapigateway.assets.file=$sourceAssetFileAGW\
+        -Dapigateway.useLocalRepo=false\
+        -Denable.archive=true"
 }
 
 def createProject(props, dirWorkspace, dirUtils, module, assetPrefix, type, buildVersion) {
